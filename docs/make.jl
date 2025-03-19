@@ -6,7 +6,7 @@ DocMeta.setdocmeta!(ring_model, :DocTestSetup, :(using ring_model); recursive=tr
 
 
 const _PAGES = [
-    "Introduction" => ["index.md"],
+    "Introduction" => ["index.md", "example.md"],
     "API Reference" => ["api_reference.md"]
 ]
 
