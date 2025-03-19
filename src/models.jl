@@ -1,3 +1,14 @@
+"""
+    ring_mpsge(
+        regions, 
+        goods, 
+        starting_land_share, 
+        weight;
+        initial_labor_endowment = 5000
+    )
+
+Constructs an MPSGE model of a ring economy.
+"""
 function ring_mpsge(
         regions, 
         goods, 
@@ -74,6 +85,17 @@ function ring_mpsge(
     return M
 end
 
+"""
+    ring_mcp(        
+            regions, 
+            goods, 
+            starting_land_share, 
+            weight;
+            initial_labor_endowment = 5000
+        )
+
+Constructs an MCP model of a ring economy.
+"""
 function ring_mcp(        
         regions, 
         goods, 
