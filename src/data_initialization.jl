@@ -34,3 +34,25 @@ function initialize_data(N::Int; random_seed = 1234)
 
     return regions, goods, starting_land_share, weight
 end
+
+
+function initialize_gams_data()
+
+    regions = Symbol.("r", lpad.(1:40, 2, "0"))
+    goods = [:corn, :beans, :wheat]
+
+    
+    weight = NamedArray([0.0,0.0,0.0], [:corn, :beans, :wheat])
+    for row in CSV.File(joinpath(@__DIR__, "gams/data/weights.csv"))
+        weight[Symbol(row[:g])] = row[:value]
+    end
+
+    starting_land_share = NamedArray([0.0, 0.0, 0.0], goods)
+    for row in CSV.File(joinpath(@__DIR__, "gams/data/land_value_share.csv"))
+        starting_land_share[Symbol(row[:g])] = row[:value]
+    end
+
+
+    return regions, goods, starting_land_share, weight
+
+end

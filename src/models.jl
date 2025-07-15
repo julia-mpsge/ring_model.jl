@@ -59,13 +59,13 @@ function ring_mpsge(
     end)
 
     @demand(M, workers, begin
-            [@final_demand(price[g], 1) for g∈goods]...
-            @endowment(labor_price, labor_endowment)
+        @final_demand(price[g=goods], 1)
+        @endowment(labor_price, labor_endowment)
     end)
 
     @demand(M, landowners, begin
-            [@final_demand(price[g], 1) for g∈goods]...
-            [@endowment(land_price[r], area[r]) for r∈regions]...
+        @final_demand(price[g=goods], 1)
+        @endowment(land_price[r=regions], area[r])
     end)
 
     return M
