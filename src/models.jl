@@ -25,49 +25,38 @@ function ring_mpsge(
 
     @parameters(M, begin
         labor_endowment, initial_labor_endowment
-        land_share[goods], 0
-        land_tax[regions], 0
+        land_share[good=goods], starting_land_share[good]
+        land_tax[region = regions], 0
     end)
 
-
-    for g∈goods
-        set_value!(land_share[g], starting_land_share[g])
-    end
-
     @sectors(M, begin
-        transport[regions,goods]
-        agriculture[regions,goods]
+        transport[region = regions, good = goods]
+        agriculture[region = regions, good = goods]
     end)
 
     @commodities(M, begin
-        price[goods]
-        region_good_price[regions, goods]
-        land_price[regions]
+        price[good = goods]
+        region_good_price[region = regions, good = goods]
+        land_price[region = regions], (lower_bound = 1e-6,)
         labor_price
     end)
-
 
     @consumers(M, begin
         workers
         landowners
     end)
 
-    for r∈regions, g∈goods
-        @production(M, transport[r,g], [s=0,t=0], begin
-            @output(price[g], 1, t)
-            @input(labor_price, distance[r]*weight[g], s)
-            @input(region_good_price[r,g], 1, s)
-        end)
-    end
+    @production(M, transport[r=regions,g=goods], [s=0,t=0], begin
+        @output(price[g], 1, t)
+        @input(labor_price, distance[r]*weight[g], s)
+        @input(region_good_price[r,g], 1, s)
+    end)
 
-
-    for r∈regions, g∈goods
-        @production(M, agriculture[r,g], [s=1, t=0], begin
-            @output(region_good_price[r,g], 1, t)
-            @input(land_price[r], land_share[g], s)#, taxes = [Tax(workers, land_tax[r])])
-            @input(labor_price, 1-land_share[g], s)
-        end)
-    end
+    @production(M, agriculture[r=regions,g=goods], [s=1, t=0], begin
+        @output(region_good_price[r,g], 1, t)
+        @input(land_price[r], land_share[g], s)#, taxes = [Tax(workers, land_tax[r])])
+        @input(labor_price, 1-land_share[g], s)
+    end)
 
     @demand(M, workers, begin
             [@final_demand(price[g], 1) for g∈goods]...
@@ -78,9 +67,6 @@ function ring_mpsge(
             [@final_demand(price[g], 1) for g∈goods]...
             [@endowment(land_price[r], area[r]) for r∈regions]...
     end)
-
-    
-    set_lower_bound.(land_price, 1e-6)
 
     return M
 end
